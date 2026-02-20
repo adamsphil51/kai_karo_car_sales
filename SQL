@@ -1,0 +1,162 @@
+-- Kai & Karo Car Sales Company
+-- Kiambu Road branch
+-- PostgreSQL
+
+DROP TABLE IF EXISTS sales CASCADE;
+DROP TABLE IF EXISTS cars CASCADE;
+DROP TABLE IF EXISTS salesmen CASCADE;
+DROP TABLE IF EXISTS customers CASCADE;
+DROP TABLE IF EXISTS branches CASCADE;
+
+
+-- Branch
+CREATE TABLE branches (
+    branch_id SERIAL PRIMARY KEY,
+    branch_name VARCHAR(150) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    region VARCHAR(100),
+    opened_on DATE
+);
+
+INSERT INTO branches (branch_name, city, region, opened_on)
+VALUES ('Kiambu Road', 'Nairobi', 'Central Kenya', '2015-05-12');
+
+
+-- Salesmen
+CREATE TABLE salesmen (
+    salesman_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    branch_id INT NOT NULL REFERENCES branches(branch_id),
+    hire_date DATE,
+    monthly_salary NUMERIC(12,2)
+);
+
+INSERT INTO salesmen (first_name, last_name, branch_id, hire_date, monthly_salary)
+VALUES
+('John', 'Mwangi', 1, '2018-03-15', 120000),
+('Grace', 'Njeri', 1, '2019-06-01', 110000),
+('Peter', 'Otieno', 1, '2020-01-20', 115000),
+('Esther', 'Wanjiku', 1, '2021-09-12', 105000),
+('David', 'Kamau', 1, '2017-11-05', 125000);
+
+
+-- Customers
+CREATE TABLE customers (
+    customer_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(150),
+    phone VARCHAR(20),
+    city VARCHAR(100),
+    loyalty_points INT DEFAULT 0
+);
+
+INSERT INTO customers (first_name, last_name, email, phone, city, loyalty_points)
+VALUES
+('Alice', 'Kimani', 'alice.kimani@gmail.com', '0712345678', 'Nairobi', 120),
+('Brian', 'Ochieng', 'brian.ochieng@yahoo.com', '0723456789', 'Nairobi', 80),
+('Catherine', 'Mutua', 'catherine.mutua@gmail.com', '0734567890', 'Nairobi', 150),
+('Dennis', 'Mwanzia', 'dennis.mwanzia@gmail.com', '0745678901', 'Nairobi', 90),
+('Esther', 'Chebet', 'esther.chebet@yahoo.com', '0756789012', 'Nairobi', 110);
+
+
+-- Cars
+CREATE TABLE cars (
+    car_id SERIAL PRIMARY KEY,
+    brand VARCHAR(100) NOT NULL,
+    model VARCHAR(150) NOT NULL,
+    year_of_manufacture INT CHECK(year_of_manufacture >= 2000),
+    cost_kenya NUMERIC(14,2) NOT NULL,
+    stock INT NOT NULL DEFAULT 0
+);
+
+INSERT INTO cars (brand, model, year_of_manufacture, cost_kenya, stock)
+VALUES
+('Toyota', 'Land Cruiser Prado', 2022, 8500000, 5),
+('Nissan', 'X-Trail', 2021, 5500000, 7),
+('Mercedes-Benz', 'C-Class', 2023, 9500000, 3),
+('Ford', 'Ranger', 2020, 4500000, 6),
+('Honda', 'CR-V', 2022, 5000000, 4),
+('BMW', 'X5', 2023, 11000000, 2),
+('Volkswagen', 'Polo', 2021, 3200000, 10),
+('Suzuki', 'Vitara', 2022, 4000000, 5),
+('Toyota', 'Corolla', 2023, 3300000, 8),
+('Mazda', 'CX-5', 2021, 4800000, 6);
+
+
+-- Sales transactions (60 entries)
+CREATE TABLE sales (
+    sale_id SERIAL PRIMARY KEY,
+    sale_date DATE NOT NULL,
+    branch_id INT REFERENCES branches(branch_id),
+    salesman_id INT REFERENCES salesmen(salesman_id),
+    customer_id INT REFERENCES customers(customer_id),
+    car_id INT REFERENCES cars(car_id),
+    quantity INT NOT NULL,
+    total_amount NUMERIC(14,2) NOT NULL,
+    payment_method VARCHAR(50)
+);
+
+INSERT INTO sales (sale_date, branch_id, salesman_id, customer_id, car_id, quantity, total_amount, payment_method)
+VALUES
+('2026-01-02',1,1,1,1,1,8500000,'Cash'),
+('2026-01-03',1,2,2,2,1,5500000,'Bank Transfer'),
+('2026-01-04',1,3,3,3,1,9500000,'Cash'),
+('2026-01-05',1,4,4,4,1,4500000,'Financing'),
+('2026-01-06',1,5,5,5,1,5000000,'Bank Transfer'),
+('2026-01-07',1,1,2,6,1,11000000,'Cash'),
+('2026-01-08',1,2,3,7,1,3200000,'Cash'),
+('2026-01-09',1,3,4,8,1,4000000,'Financing'),
+('2026-01-10',1,4,5,9,1,3300000,'Bank Transfer'),
+('2026-01-11',1,5,1,10,1,4800000,'Cash'),
+('2026-01-12',1,1,2,1,1,8500000,'Cash'),
+('2026-01-13',1,2,3,2,1,5500000,'Bank Transfer'),
+('2026-01-14',1,3,4,3,1,9500000,'Cash'),
+('2026-01-15',1,4,5,4,1,4500000,'Financing'),
+('2026-01-16',1,5,1,5,1,5000000,'Bank Transfer'),
+('2026-01-17',1,1,2,6,1,11000000,'Cash'),
+('2026-01-18',1,2,3,7,1,3200000,'Cash'),
+('2026-01-19',1,3,4,8,1,4000000,'Financing'),
+('2026-01-20',1,4,5,9,1,3300000,'Bank Transfer'),
+('2026-01-21',1,5,1,10,1,4800000,'Cash'),
+('2026-01-22',1,1,2,1,1,8500000,'Cash'),
+('2026-01-23',1,2,3,2,1,5500000,'Bank Transfer'),
+('2026-01-24',1,3,4,3,1,9500000,'Cash'),
+('2026-01-25',1,4,5,4,1,4500000,'Financing'),
+('2026-01-26',1,5,1,5,1,5000000,'Bank Transfer'),
+('2026-01-27',1,1,2,6,1,11000000,'Cash'),
+('2026-01-28',1,2,3,7,1,3200000,'Cash'),
+('2026-01-29',1,3,4,8,1,4000000,'Financing'),
+('2026-01-30',1,4,5,9,1,3300000,'Bank Transfer'),
+('2026-01-31',1,5,1,10,1,4800000,'Cash'),
+('2026-02-01',1,1,2,1,1,8500000,'Cash'),
+('2026-02-02',1,2,3,2,1,5500000,'Bank Transfer'),
+('2026-02-03',1,3,4,3,1,9500000,'Cash'),
+('2026-02-04',1,4,5,4,1,4500000,'Financing'),
+('2026-02-05',1,5,1,5,1,5000000,'Bank Transfer'),
+('2026-02-06',1,1,2,6,1,11000000,'Cash'),
+('2026-02-07',1,2,3,7,1,3200000,'Cash'),
+('2026-02-08',1,3,4,8,1,4000000,'Financing'),
+('2026-02-09',1,4,5,9,1,3300000,'Bank Transfer'),
+('2026-02-10',1,5,1,10,1,4800000,'Cash'),
+('2026-02-11',1,1,2,1,1,8500000,'Cash'),
+('2026-02-12',1,2,3,2,1,5500000,'Bank Transfer'),
+('2026-02-13',1,3,4,3,1,9500000,'Cash'),
+('2026-02-14',1,4,5,4,1,4500000,'Financing'),
+('2026-02-15',1,5,1,5,1,5000000,'Bank Transfer'),
+('2026-02-16',1,1,2,6,1,11000000,'Cash'),
+('2026-02-17',1,2,3,7,1,3200000,'Cash'),
+('2026-02-18',1,3,4,8,1,4000000,'Financing'),
+('2026-02-19',1,4,5,9,1,3300000,'Bank Transfer'),
+('2026-02-20',1,5,1,10,1,4800000,'Cash'),
+('2026-02-21',1,1,2,1,1,8500000,'Cash'),
+('2026-02-22',1,2,3,2,1,5500000,'Bank Transfer'),
+('2026-02-23',1,3,4,3,1,9500000,'Cash'),
+('2026-02-24',1,4,5,4,1,4500000,'Financing'),
+('2026-02-25',1,5,1,5,1,5000000,'Bank Transfer'),
+('2026-02-26',1,1,2,6,1,11000000,'Cash'),
+('2026-02-27',1,2,3,7,1,3200000,'Cash'),
+('2026-02-28',1,3,4,8,1,4000000,'Financing'),
+('2026-02-29',1,4,5,9,1,3300000,'Bank Transfer'),
+('2026-03-01',1,5,1,10,1,4800000,'Cash');
